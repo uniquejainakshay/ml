@@ -13,8 +13,8 @@ function [th] = linear_regression(eta, x, y, graph)
     
     % graph plotting %
     if graph == 'b' 
-        hold on ;
         scatter(x, y);
+        hold on ;
     elseif (graph == 'c' || graph == 'd' )   % draw J(theta) mesh 
         [m1, m2] = meshgrid(-2:0.05:2);
         jtheta = @(theta0, theta1) (1/(2*size(y, 1)))*(( y - (x * ([theta0 theta1]')) )' * ( y - (x * ([theta0 theta1]')) ));
@@ -49,7 +49,7 @@ function [th] = linear_regression(eta, x, y, graph)
         
         if (graph == 'c'  || graph == 'd' ) 
             scatter3(theta(1, 1), theta(2, 1) , j) ; 
-            pause(1);
+            pause(0.2);
             hold on ;
         end
         
@@ -58,7 +58,7 @@ function [th] = linear_regression(eta, x, y, graph)
     th = theta; 
     if graph == 'b' 
         f = @(q) theta(2,1)*q + theta(1, 1);
-        hold on ; 
         ezplot(f, [-1 , 24, -1 , 24]) ; 
+        hold on ; 
     end
 end
