@@ -29,5 +29,4 @@ function lw_linear_regression(x, y, subq, tau)
 		%pause(3);
 		plot(x(:, 2), ht, 'or'); 
 		hold on; 
-		
 end
