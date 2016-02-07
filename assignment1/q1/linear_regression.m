@@ -1,9 +1,10 @@
-%X = importdata('q1x.dat'); 
-%Y = importdata('q1y.dat');
-% th = linear_regression(0.000001, X , Y ) ; 
+
+%th = linear_regression(0.000001, X , Y ) ; 
 
 
-function [th] = linear_regression(eta, x, y, graph)  
+function [th] = linear_regression(eta, graph)  
+    x = importdata('q1x.dat'); 
+    y = importdata('q1y.dat');
     x = (x - mean(x))/std(x); 
     y = (y - mean(y))/std(y);
     
