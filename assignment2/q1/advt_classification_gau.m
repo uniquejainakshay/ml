@@ -4,70 +4,68 @@ function advt_classification_gau()
     x = data(:, 1:end-1);
     y = data(: , end ) ; 
     [m , ~ ] = size(x); 
- 
-    b = ones(m, 1);
-	l = zeros(m , 1); 
-	u = ones(m , 1 ); 
     K = zeros(m , m ) ; 
+    bw = 2.5e-4 ; 
     for i = 1 : m 
         for j = 1 : i 
-            diff = x(i, :) - x(j , : );
-            K(i, j ) = diff * diff'; 
+            K (i , j) = gaus_kern(x(i, :),x(j , : ), bw);
             K(j, i ) = K(i ,j ); 
         end
     end
-    bw = 2.5e-4 ; 
-    K = exp(-K * bw);
-    
     
     Y = y * y' ; % yi * yj
     Q = Y .* K ; % yi.yj.K(xi,xj)
     
     b = ones(m, 1);
-	l = zeros(m , 1); 
-	u = ones(m , 1 ); 
-    
+    cvx_precision high
     cvx_begin 
         variable alp(m, 1);
         maximize(-alp' * Q * alp + b' * alp ) ;
         subject to 
-            l <=  alp <= u;
+            0 <=  alp <= 1;
             alp' * y == 0; 
     cvx_end
     
-    sup_vec = find(0.00000001 < alp & alp < 0.99999999);
+    sup_vec = find(0.0001 < alp & alp < 0.9999);
     sup_vec
     
+    x_sup = x(sup_vec, :);
+    y_sup = y(sup_vec, :);
+    alp_sup = alp(sup_vec,:);
+    
+    [m_sup, ~] = size(x_sup);
+    
     % calculate b 
-    % Take any random support vector and calculate yi=sum(alpi*yi*xi*x)+b 
-    % Get b from the above equation
-    
-    idx = sup_vec(1) ; % taking the first one  itself, doesn't seem working 
-    
-    %idx = find(alp==max(alp(find(alp>1e-4 & alp<0.9999))))  % TODO : no
-    %need I think 
-    
-    diff = x ; 
+    % calculate using yi=sum(alpi*yi*xi*x)+b
+    idx = find(alp==max(alp_sup));
+
+    K_xi_x = zeros(m,1);
     for i = 1:m
-        diff(i, : ) = diff(i, : ) - x(idx, : ) ; 
+        K_xi_x(i, 1 ) = gaus_kern(x(i, : ), x(idx, : ), bw) ; 
     end
-    xi_x = diag(diff * diff'); 
     
-    b_opt = y(idx) - ( alp .* y)' * xi_x ; 
+    b_opt = y(idx) - ( alp .* y)' * K_xi_x ; 
 
     % testing against test data 
     tdata = importdata('test.txt');
     x_test = tdata(:, 1:end-1);
     y_test = tdata(:, end);
-    
-    y_cal = (w_opt' * x_test')' + b_opt ; 
+    [test_size, ~ ] = size(x_test);
+    y_cal = zeros(test_size, 1 ) ; 
+    % using only support vectors for classification 
+    for l = 1: test_size
+        k_xi_x = zeros(m_sup, 1) ; 
+        for p = 1:m_sup 
+            k_xi_x(p , : ) = gaus_kern(x_sup(p, : ) , x_test(l, : ) , bw); 
+        end
+        y_cal(l , : ) = (alp_sup .* y_sup)' * k_xi_x + b_opt ; 
+    end
+            
     % count the mismatches 
     [total , ~ ] = size(y_test);
     [correct, ~] = size(find(y_cal .* y_test > 0 )) ; 
     
     disp('Accuracy : ' ) ; 
     disp(100 * correct / total ) ; 
-    
-    % foolish forgot the bw parameter
-    
+    %% part C completed 
 end

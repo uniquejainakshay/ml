@@ -1,4 +1,4 @@
-function [al] = advt_classification_lin ()
+function advt_classification_lin ()
     data = importdata('train.txt');
     x = data(:, 1:end-1);
     y = data(: , end ) ; 
@@ -22,8 +22,7 @@ function [al] = advt_classification_lin ()
             l <=  alp <= u;
             alp' * y == 0; 
     cvx_end
-    al = alp;
-    sup_vec = find(0.0001 < alp & alp < 0.999999);
+    sup_vec = find(0.000001 < alp & alp < 0.999999);
     sup_vec
     %% part a completed -------------------------------------------
     
