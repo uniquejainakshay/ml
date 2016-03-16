@@ -3,22 +3,9 @@ function libsvm_test_lin()
     x = data(:, 1:end-1);
     y = data(: , end ) ; 
     [m, ~] = size(x);
-    
-    % t: 0 linear kernel
-    
-    model = svmtrain(y, x , '-t 0'); 
-    svs = full(model.SVs);
-    [m_sup, ~] = size(svs);
-    
-    sup_vec = zeros(m_sup, 1);
-    for i = 1:m_sup
-        for j = 1:m
-            if svs(i,:) == x(j,:);
-                sup_vec(i)= j ; 
-                break;
-            end
-        end
-    end
+ 
+    model = svmtrain(y, x , '-t 0 -s 0 -c 1'); 
+    sup_vec = model.sv_indices;
     sup_vec
                 
 
@@ -28,4 +15,5 @@ function libsvm_test_lin()
     y_test = tdata(:, end);
 
     [y_cal, acc, prob_estimates] = svmpredict(y_test, x_test, model);
+    acc
 end

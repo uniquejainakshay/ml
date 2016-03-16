@@ -6,21 +6,10 @@ function libsvm_test_gau()
     
     % t: 0 linear kernel
     
-    model = svmtrain(y, x , '-t 2 -g 2.5e-4'); 
-    svs = full(model.SVs);
-    [m_sup, ~] = size(svs);
-    
-    sup_vec = zeros(m_sup, 1);
-    for i = 1:m_sup
-        for j = 1:m
-            if svs(i,:) == x(j,:);
-                sup_vec(i)= j ; 
-                break;
-            end
-        end
-    end
+    model = svmtrain(y, x , '-t 2 -g 2.5e-4  -s 0 -c 1  '); 
+    sup_vec = model.sv_indices;
     sup_vec
-                
+    model.totalSV
 
    % read the test data 
     tdata = importdata('test.txt');

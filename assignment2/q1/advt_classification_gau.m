@@ -1,6 +1,6 @@
 function advt_classification_gau()
     %%  part C
-    data = importdata('train.txt.small');
+    data = importdata('train.txt');
     x = data(:, 1:end-1);
     y = data(: , end ) ; 
     [m , ~ ] = size(x); 
@@ -17,7 +17,7 @@ function advt_classification_gau()
     Q = Y .* K ; % yi.yj.K(xi,xj)
     
     b = ones(m, 1);
-    cvx_precision high
+    cvx_precision low
     cvx_begin 
         variable alp(m, 1);
         maximize(-alp' * Q * alp + b' * alp ) ;
@@ -26,7 +26,7 @@ function advt_classification_gau()
             alp' * y == 0; 
     cvx_end
     
-    sup_vec = find(0.0001 < alp & alp < 0.9999);
+    sup_vec = find(0.000001 < alp & alp < 0.999999);
     sup_vec
     
     x_sup = x(sup_vec, :);
