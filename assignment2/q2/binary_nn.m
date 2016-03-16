@@ -8,8 +8,8 @@ function binary_nn()
     oj = 0 ; 
     
     %thetas
-    Tih = rand(785, 100, 1) .* 1e-5; 
-    Tho = rand(101, 1 , 1 ) .* 1e-5; 
+    Tih = (rand(785, 100, 1) - 0.5) .* 1e-5; 
+    Tho = (rand(101, 1 , 1 ) -0.5) .* 1e-5; 
     
     %expected outputs
     tj = 0 ; 
@@ -65,7 +65,7 @@ function binary_nn()
     %% training completed now testing
     
     % testing 3 
-    test3 = double(data.three_eight.test3);
+    test3 = double(data.three_eight.test3)/255;
     [m3, ~] = size(test3);
     correct = 0 ;
     for i = 1:m3 
